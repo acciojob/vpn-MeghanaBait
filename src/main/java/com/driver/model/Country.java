@@ -7,11 +7,14 @@ import javax.persistence.*;
 @Table(name = "Country")
 public class Country{
     @Id
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     private CountryName countryName;
+
     private String code;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn
     private User user;
 
@@ -22,7 +25,7 @@ public class Country{
     public Country() {
     }
 
-    public Country(Integer id, CountryName countryName, String code, User user, ServiceProvider serviceProvider) {
+    public Country(int id, CountryName countryName, String code, User user, ServiceProvider serviceProvider) {
         this.id = id;
         this.countryName = countryName;
         this.code = code;
@@ -30,11 +33,11 @@ public class Country{
         this.serviceProvider = serviceProvider;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

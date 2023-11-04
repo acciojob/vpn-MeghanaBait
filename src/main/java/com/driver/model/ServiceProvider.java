@@ -9,42 +9,40 @@ import java.util.List;
 public class ServiceProvider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+    private int id;
     private String name;
 
     @ManyToOne
     @JoinColumn
     private Admin admin;
 
-    @ManyToMany(mappedBy = "serviceProvider",cascade = CascadeType.ALL)
-    List<User> users = new ArrayList<>();
+    @ManyToMany(mappedBy = "serviceProviderList", cascade = CascadeType.ALL)
+    List<User> users=new ArrayList<>();
 
     @OneToMany(mappedBy = "serviceProvider",cascade = CascadeType.ALL)
-    List<Connection> connectionList = new ArrayList<>();
+    List<Connection> connectionList=new ArrayList<>();
 
-    @OneToMany(mappedBy = "serviceProvider", cascade = CascadeType.ALL)
-    List<Country> countryList = new ArrayList<>();
-
+    @OneToMany(mappedBy = "serviceProvider",cascade = CascadeType.ALL)
+    List<Country> countryList=new ArrayList<>();
 
     public ServiceProvider() {
+
     }
 
-    public ServiceProvider(Integer id, String name, Admin admin, List<User> userList, List<Connection> connectionList, List<Country> countryList) {
+    public ServiceProvider(int id, String name, Admin admin, List<User> users, List<Connection> connectionList, List<Country> countryList) {
         this.id = id;
         this.name = name;
         this.admin = admin;
-        this.users = userList;
+        this.users = users;
         this.connectionList = connectionList;
         this.countryList = countryList;
     }
 
-
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

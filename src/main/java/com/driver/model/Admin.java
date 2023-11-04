@@ -10,27 +10,28 @@ import java.util.List;
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     private String username;
     private String password;
-
     @OneToMany(mappedBy = "admin",cascade = CascadeType.ALL)
-    private List<ServiceProvider> serviceProviderList = new ArrayList<>();
+    List<ServiceProvider> serviceProviders= new ArrayList<>();
 
     public Admin() {
+
     }
 
-    public Admin(Integer id, String userName, String password) {
+    public Admin(int id, String username, String passsword, List<ServiceProvider> serviceProviders) {
         this.id = id;
-        this.username = userName;
-        this.password = password;
+        this.username = username;
+        this.password = passsword;
+        this.serviceProviders = serviceProviders;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -50,11 +51,11 @@ public class Admin {
         this.password = password;
     }
 
-    public List<ServiceProvider> getServiceProviderList() {
-        return serviceProviderList;
+    public List<ServiceProvider> getServiceProviders() {
+        return serviceProviders;
     }
 
-    public void setServiceProviderList(List<ServiceProvider> serviceProviderList) {
-        this.serviceProviderList = serviceProviderList;
+    public void setServiceProviders(List<ServiceProvider> serviceProviders) {
+        this.serviceProviders = serviceProviders;
     }
 }
