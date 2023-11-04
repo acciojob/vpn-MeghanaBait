@@ -1,6 +1,5 @@
 package com.driver.model;
 
-import javax.lang.model.type.ArrayType;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class ServiceProvider {
     private Admin admin;
 
     @ManyToMany(mappedBy = "serviceProvider",cascade = CascadeType.ALL)
-    List<User> userList = new ArrayList<>();
+    List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "serviceProvider",cascade = CascadeType.ALL)
     List<Connection> connectionList = new ArrayList<>();
@@ -35,7 +34,7 @@ public class ServiceProvider {
         this.id = id;
         this.name = name;
         this.admin = admin;
-        this.userList = userList;
+        this.users = userList;
         this.connectionList = connectionList;
         this.countryList = countryList;
     }
@@ -65,12 +64,12 @@ public class ServiceProvider {
         this.admin = admin;
     }
 
-    public List<User> getUserList() {
-        return userList;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     public List<Connection> getConnectionList() {

@@ -25,7 +25,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Admin register(String username, String password) {
         Admin admin =new Admin();
-        admin.setUserName(username);
+        admin.setUsername(username);
         admin.setPassword(password);
 
         //saving into DB
@@ -38,7 +38,7 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminRepository1.findById(adminId).get();
         ServiceProvider serviceProvider = new ServiceProvider();
         serviceProvider.setAdmin(admin);
-        admin.getServiceProviders().add(serviceProvider);
+        admin.getServiceProviderList().add(serviceProvider);
         adminRepository1.save(admin);
         return admin;
     }
