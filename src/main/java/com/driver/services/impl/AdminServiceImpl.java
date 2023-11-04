@@ -11,6 +11,10 @@ import com.driver.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class AdminServiceImpl implements AdminService {
     @Autowired
@@ -24,46 +28,47 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Admin register(String username, String password) {
-        Admin admin =new Admin();
+        Admin admin = new Admin();
         admin.setUsername(username);
         admin.setPassword(password);
-
-        //saving into DB
+        admin.setServiceProviders(new ArrayList<>());
         adminRepository1.save(admin);
         return admin;
     }
 
     @Override
     public Admin addServiceProvider(int adminId, String providerName) {
-        Admin admin = adminRepository1.findById(adminId).get();
+        Optional<Admin> optionalAdmin = adminRepository1.findById(adminId);
+        Admin admin = optionalAdmin.get();
+
         ServiceProvider serviceProvider = new ServiceProvider();
         serviceProvider.setAdmin(admin);
-        admin.getServiceProviders().add(serviceProvider);
+        serviceProvider.setName(providerName);
+
+        List<ServiceProvider> serviceProviderList = admin.getServiceProviders();
+        serviceProviderList.add(serviceProvider);
+        admin.setServiceProviders(serviceProviderList);
+
         adminRepository1.save(admin);
         return admin;
     }
 
     @Override
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception{
-        boolean isPresent = false;
+        Optional<ServiceProvider> optionalServiceProvider = serviceProviderRepository1.findById(serviceProviderId);
+        if(!optionalServiceProvider.isPresent()) throw new Exception("Service provider not found");
 
-        String countryNameUpperCase = countryName.toUpperCase();
-
-        for(CountryName country : CountryName.values()){
-            if(country.toString().equals(countryNameUpperCase)){
-                isPresent = true;
-            }
-        }
-
-        if(!isPresent){
-            throw new Exception("Country not found");
-        }
-        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
+        ServiceProvider serviceProvider = optionalServiceProvider.get();
         Country country = new Country();
-        country.setCountryName(CountryName.valueOf(countryNameUpperCase));
-        country.setCode(CountryName.valueOf(countryNameUpperCase).toCode());
+        country.enrich(countryName);
+
         country.setServiceProvider(serviceProvider);
-        serviceProvider.getCountryList().add(country);
+        //Country countryWithId = countryRepository1.save(country);
+
+        List<Country> countryList = serviceProvider.getCountryList();
+        countryList.add(country);
+        serviceProvider.setCountryList(countryList);
+
         serviceProviderRepository1.save(serviceProvider);
         return serviceProvider;
     }

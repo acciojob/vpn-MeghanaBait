@@ -11,6 +11,9 @@ import com.driver.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,43 +26,41 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(String username, String password, String countryName) throws Exception{
-        //create a user of given country. The originalIp of the user should be "countryCode.userId" and return the user. Note that right now user is not connected and thus connected would be false and maskedIp would be null
-        //Note that the userId is created automatically by the repository layer
-        boolean isPresent = false;
-        String countryNameUpperCase = countryName.toUpperCase();
-
-        for(CountryName country : CountryName.values()){
-            if(country.toString().equals(countryNameUpperCase)) isPresent = true;
-        }
-
-        if(!isPresent) throw new Exception("Country not found");
-
         Country country = new Country();
-        country.setCountryName(CountryName.valueOf(countryNameUpperCase));
-        country.setCode(CountryName.valueOf(countryNameUpperCase).toCode());
+        country.enrich(countryName);
 
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
-        user.setOriginalIp(country.getCode()+"."+user.getId());
-        country.setUser(user);
-        user.setOriginalCountry(country);
+        user.setMaskedIp(null);
         user.setConnected(false);
-        userRepository3.save(user);
-        return user;
+        user.setOriginalCountry(country);
+        country.setUser(user);
+
+        User userWithId = userRepository3.save(user);
+        userWithId.setOriginalIp(userWithId.getOriginalCountry().getCode()+"."+userWithId.getId());
+
+        userRepository3.save(userWithId);
+        return userWithId;
     }
 
     @Override
     public User subscribe(Integer userId, Integer serviceProviderId) {
-        //subscribe to the serviceProvider by adding it to the list of providers and return updated User
-        User user = userRepository3.findById(userId).get();
-        ServiceProvider serviceProvider = serviceProviderRepository3.findById(serviceProviderId).get();
+        Optional<User> optionalUser = userRepository3.findById(userId);
+        User user = optionalUser.get();
 
-        user.getServiceProviderList().add(serviceProvider);
-        serviceProvider.getUsers().add(user);
+        Optional<ServiceProvider> optionalServiceProvider = serviceProviderRepository3.findById(serviceProviderId);
+        ServiceProvider serviceProvider = optionalServiceProvider.get();
+
+        List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
+        serviceProviderList.add(serviceProvider);
+        user.setServiceProviderList(serviceProviderList);
+
+        List<User> userList = serviceProvider.getUsers();
+        userList.add(user);
+        serviceProvider.setUsers(userList);
 
         serviceProviderRepository3.save(serviceProvider);
-
         return user;
     }
 }
