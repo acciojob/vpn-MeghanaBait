@@ -30,10 +30,10 @@ public class ConnectionServiceImpl implements ConnectionService {
         User user = userRepository2.findById(userId).get();
         if (user.getMaskedIp() != null) throw new Exception("Already connected");
         if (countryName.equalsIgnoreCase(user.getOriginalCountry().getCountryName().toString())) return user;
-        if (user.getServiceProviderList() == null) {
+        if (user.getServiceProviders() == null) {
             throw new Exception("Unable to connect");
         }
-        List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
+        List<ServiceProvider> serviceProviderList = user.getServiceProviders();
         int a = Integer.MAX_VALUE;
         ServiceProvider serviceProvider = null;
         Country country = null;
